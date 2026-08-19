@@ -1,1 +1,1 @@
-https://movie-recommendation-frontend-dyco.onrender.com
+https://movie-recommendation-system-2wx1.onrender.com
