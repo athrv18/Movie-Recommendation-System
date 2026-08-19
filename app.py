@@ -426,7 +426,7 @@ def poster_grid(
 
                     st.image(
                         poster,
-                        use_container_width=True,
+                        use_column_width=True,
                     )
 
                 else:
@@ -1047,7 +1047,7 @@ elif st.session_state.view == "details":
 
         st.image(
             backdrop,
-            use_container_width=True,
+            use_column_width=True,
         )
 
     # -----------------------------------------------------
@@ -1065,7 +1065,7 @@ elif st.session_state.view == "details":
 
             st.image(
                 poster,
-                use_container_width=True,
+                use_column_width=True,
             )
 
         else:
