@@ -1,11 +1,15 @@
 import requests
 import streamlit as st
+import os
 
 # =========================================================
 # CONFIG
 # =========================================================
 
-API_BASE = "http://127.0.0.1:8000"
+API_BASE = os.getenv(
+    "API_BASE",
+    "http://127.0.0.1:8000"
+)
 
 TMDB_IMG = "https://image.tmdb.org/t/p/w500"
 TMDB_BACKDROP = "https://image.tmdb.org/t/p/original"
@@ -473,7 +477,6 @@ def poster_grid(
                             f"{movie_index}_"
                             f"{tmdb_id}"
                         ),
-                        width="stretch",
                     ):
 
                         goto_details(
@@ -727,7 +730,6 @@ with st.sidebar:
 
     if st.button(
         "🏠 Home",
-        width="stretch",
     ):
 
         goto_home()
@@ -965,7 +967,6 @@ elif st.session_state.view == "details":
 
         if st.button(
             "← Back to Home",
-            width="stretch",
         ):
 
             goto_home()
@@ -990,7 +991,6 @@ elif st.session_state.view == "details":
 
         if st.button(
             "← Home",
-            width="stretch",
         ):
 
             goto_home()
