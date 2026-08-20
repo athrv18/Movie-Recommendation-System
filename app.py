@@ -233,141 +233,42 @@ if query_id:
 # API HELPER
 # =========================================================
 
-@st.cache_data(ttl=60, show_spinner=False)
-def _api_request(path, params_tuple):
-
-    params = dict(params_tuple)
-
-    response = requests.get(
-        f"{API_BASE}{path}",
-        params=params,
-        timeout=30,
-    )
-
-    if response.status_code >= 400:
-
-        return {
-            "success": False,
-            "status_code": response.status_code,
-            "error": (
-                f"HTTP {response.status_code}: "
-                f"{response.text[:250]}"
-            ),
-        }
-
-    try:
-
-        return {
-            "success": True,
-            "data": response.json(),
-        }
-
-    except ValueError:
-
-        return {
-            "success": False,
-            "status_code": 0,
-            "error": "Backend returned invalid JSON.",
-        }
-
-
+@st.cache_data(ttl=30)
 def api_get_json(path, params=None):
 
-    if params is None:
-        params = {}
-
-    params_tuple = tuple(
-        sorted(
-            (str(key), str(value))
-            for key, value in params.items()
-        )
-    )
-
     try:
 
-        result = _api_request(
-            path,
-            params_tuple,
+        response = requests.get(
+            f"{API_BASE}{path}",
+            params=params,
+            timeout=20,
         )
 
-        # -------------------------------------------------
-        # SUCCESS
-        # -------------------------------------------------
+        if response.status_code >= 400:
 
-        if result.get("success"):
+            return None, (
+                f"HTTP {response.status_code}: "
+                f"{response.text[:250]}"
+            )
 
-            return result["data"], None
+        try:
+            return response.json(), None
 
-        status_code = result.get("status_code")
+        except ValueError:
 
-        # -------------------------------------------------
-        # RETRY TEMPORARY SERVER ERRORS
-        # -------------------------------------------------
+            return None, "Backend returned invalid JSON."
 
-        if status_code in (500, 502, 503, 504):
+    except requests.exceptions.ConnectionError:
 
-            _api_request.clear()
-
-            try:
-
-                response = requests.get(
-                    f"{API_BASE}{path}",
-                    params=params,
-                    timeout=30,
-                )
-
-                if response.status_code >= 400:
-
-                    return None, (
-                        f"HTTP {response.status_code}: "
-                        f"{response.text[:250]}"
-                    )
-
-                try:
-
-                    return response.json(), None
-
-                except ValueError:
-
-                    return None, (
-                        "Backend returned invalid JSON."
-                    )
-
-            except requests.exceptions.Timeout:
-
-                return None, (
-                    "Backend took too long to respond."
-                )
-
-            except requests.exceptions.ConnectionError:
-
-                return None, (
-                    "Backend temporarily unavailable."
-                )
-
-            except requests.exceptions.RequestException as error:
-
-                return None, str(error)
-
-        # -------------------------------------------------
-        # OTHER ERRORS
-        # -------------------------------------------------
-
-        return None, result.get(
-            "error",
-            "Backend request failed.",
+        return None, (
+            "Backend not connected. "
+            "Please start FastAPI on port 8000."
         )
 
     except requests.exceptions.Timeout:
 
         return None, (
             "Backend took too long to respond."
-        )
-
-    except requests.exceptions.ConnectionError:
-
-        return None, (
-            "Backend temporarily unavailable."
         )
 
     except requests.exceptions.RequestException as error:
@@ -899,7 +800,7 @@ if st.session_state.view == "home":
         "Movie title",
         placeholder=(
             "Avenger, Batman, "
-            "Spider Man"
+            "Spider man ..."
         ),
         label_visibility="collapsed",
     )
