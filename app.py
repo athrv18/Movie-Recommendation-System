@@ -21,6 +21,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+
 # =========================================================
 # SESSION STATE
 # =========================================================
@@ -241,7 +242,7 @@ def api_get_json(path, params=None):
         response = requests.get(
             f"{API_BASE}{path}",
             params=params,
-            timeout=20,
+            timeout=30,
         )
 
         if response.status_code >= 400:
@@ -252,17 +253,19 @@ def api_get_json(path, params=None):
             )
 
         try:
-            return response.json(), None
+            data = response.json()
 
         except ValueError:
 
             return None, "Backend returned invalid JSON."
 
+        return data, None
+
     except requests.exceptions.ConnectionError:
 
         return None, (
-            "Backend not connected. "
-            "Please start FastAPI on port 8000."
+            "Backend connection failed. "
+            "Please check the Render API."
         )
 
     except requests.exceptions.Timeout:
@@ -425,7 +428,7 @@ def poster_grid(
                 if poster:
 
                     st.image(
-                        poster,
+                        poster
                     )
 
                 else:
@@ -531,9 +534,14 @@ def parse_tmdb_search_to_cards(
             if not title or not tmdb_id:
                 continue
 
+            try:
+                tmdb_id = int(tmdb_id)
+            except (ValueError, TypeError):
+                continue
+
             raw_items.append(
                 {
-                    "tmdb_id": int(tmdb_id),
+                    "tmdb_id": tmdb_id,
                     "title": title,
                     "poster_url": movie.get(
                         "poster_url"
@@ -541,13 +549,11 @@ def parse_tmdb_search_to_cards(
                     "poster_path": movie.get(
                         "poster_path"
                     ),
-                    "release_date": movie.get(
-                        "release_date"
-                    )
-                    or movie.get(
-                        "first_air_date"
-                    )
-                    or "",
+                    "release_date": (
+                        movie.get("release_date")
+                        or movie.get("first_air_date")
+                        or ""
+                    ),
                 }
             )
 
@@ -576,9 +582,14 @@ def parse_tmdb_search_to_cards(
             if not title or not tmdb_id:
                 continue
 
+            try:
+                tmdb_id = int(tmdb_id)
+            except (ValueError, TypeError):
+                continue
+
             raw_items.append(
                 {
-                    "tmdb_id": int(tmdb_id),
+                    "tmdb_id": tmdb_id,
                     "title": title,
                     "poster_url": movie.get(
                         "poster_url"
@@ -586,10 +597,11 @@ def parse_tmdb_search_to_cards(
                     "poster_path": movie.get(
                         "poster_path"
                     ),
-                    "release_date": movie.get(
-                        "release_date"
-                    )
-                    or "",
+                    "release_date": (
+                        movie.get("release_date")
+                        or movie.get("first_air_date")
+                        or ""
+                    ),
                 }
             )
 
@@ -622,9 +634,7 @@ def parse_tmdb_search_to_cards(
     for movie in final_items[:10]:
 
         release_date = (
-            movie.get(
-                "release_date"
-            )
+            movie.get("release_date")
             or ""
         )
 
@@ -660,22 +670,35 @@ def parse_tmdb_search_to_cards(
 
 
 # =========================================================
-# TF-IDF
+# TF-IDF RECOMMENDATION PARSER
 # =========================================================
 
 def to_cards_from_tfidf_items(items):
 
     cards = []
 
-    for item in items or []:
+    if not isinstance(items, list):
+        return cards
+
+    for item in items:
 
         if not isinstance(item, dict):
             continue
 
-        tmdb = (
-            item.get("tmdb")
-            or {}
-        )
+        # Backend format:
+        #
+        # {
+        #   "title": "...",
+        #   "score": 0.18,
+        #   "tmdb": {
+        #       "tmdb_id": 123,
+        #       "title": "...",
+        #       "poster_url": "...",
+        #       "release_date": "..."
+        #   }
+        # }
+
+        tmdb = item.get("tmdb")
 
         if not isinstance(tmdb, dict):
             continue
@@ -688,22 +711,90 @@ def to_cards_from_tfidf_items(items):
         if not tmdb_id:
             continue
 
+        try:
+            tmdb_id = int(tmdb_id)
+        except (ValueError, TypeError):
+            continue
+
         cards.append(
             {
                 "tmdb_id": tmdb_id,
+
                 "title": (
                     tmdb.get("title")
                     or item.get("title")
                     or "Untitled"
                 ),
-                "poster_url": tmdb.get(
-                    "poster_url"
+
+                "poster_url": (
+                    tmdb.get("poster_url")
                 ),
-                "poster_path": tmdb.get(
-                    "poster_path"
+
+                "poster_path": (
+                    tmdb.get("poster_path")
                 ),
-                "release_date": tmdb.get(
-                    "release_date"
+
+                "release_date": (
+                    tmdb.get("release_date")
+                    or ""
+                ),
+            }
+        )
+
+    return cards
+
+
+# =========================================================
+# GENRE RECOMMENDATION PARSER
+# =========================================================
+
+def to_cards_from_genre_items(items):
+
+    cards = []
+
+    if not isinstance(items, list):
+        return cards
+
+    for item in items:
+
+        if not isinstance(item, dict):
+            continue
+
+        tmdb_id = (
+            item.get("tmdb_id")
+            or item.get("id")
+        )
+
+        if not tmdb_id:
+            continue
+
+        try:
+            tmdb_id = int(tmdb_id)
+        except (ValueError, TypeError):
+            continue
+
+        cards.append(
+            {
+                "tmdb_id": tmdb_id,
+
+                "title": (
+                    item.get("title")
+                    or item.get("name")
+                    or "Untitled"
+                ),
+
+                "poster_url": (
+                    item.get("poster_url")
+                ),
+
+                "poster_path": (
+                    item.get("poster_path")
+                ),
+
+                "release_date": (
+                    item.get("release_date")
+                    or item.get("first_air_date")
+                    or ""
                 ),
             }
         )
@@ -1045,7 +1136,7 @@ elif st.session_state.view == "details":
     if backdrop:
 
         st.image(
-            backdrop,
+            backdrop
         )
 
     # -----------------------------------------------------
@@ -1062,7 +1153,7 @@ elif st.session_state.view == "details":
         if poster:
 
             st.image(
-                poster,
+                poster
             )
 
         else:
@@ -1151,41 +1242,81 @@ elif st.session_state.view == "details":
             },
         )
 
-    if not error and bundle:
+    # =====================================================
+    # RECOMMENDATION RESPONSE
+    # =====================================================
+
+    if not error and isinstance(bundle, dict):
+
+        # -------------------------------------------------
+        # TF-IDF
+        # -------------------------------------------------
 
         st.subheader(
             "🔎 Similar Movies"
         )
 
+        tfidf_items = bundle.get(
+            "tfidf_recommendations",
+            []
+        )
+
         tfidf_cards = (
             to_cards_from_tfidf_items(
-                bundle.get(
-                    "tfidf_recommendations",
-                    [],
-                )
+                tfidf_items
             )
         )
 
-        poster_grid(
-            tfidf_cards,
-            cols=grid_cols,
-            key_prefix="tfidf",
-        )
+        if tfidf_cards:
+
+            poster_grid(
+                tfidf_cards,
+                cols=grid_cols,
+                key_prefix="tfidf",
+            )
+
+        else:
+
+            st.info(
+                "No similar movies available."
+            )
+
+        # -------------------------------------------------
+        # GENRE
+        # -------------------------------------------------
 
         st.subheader(
             "🎭 More Like This"
         )
 
-        genre_cards = bundle.get(
+        genre_items = bundle.get(
             "genre_recommendations",
-            [],
+            []
         )
 
-        poster_grid(
-            genre_cards,
-            cols=grid_cols,
-            key_prefix="genre",
+        genre_cards = (
+            to_cards_from_genre_items(
+                genre_items
+            )
         )
+
+        if genre_cards:
+
+            poster_grid(
+                genre_cards,
+                cols=grid_cols,
+                key_prefix="genre",
+            )
+
+        else:
+
+            st.info(
+                "No genre recommendations available."
+            )
+
+    # =====================================================
+    # FALLBACK
+    # =====================================================
 
     else:
 
@@ -1201,13 +1332,30 @@ elif st.session_state.view == "details":
             },
         )
 
-        if not genre_error and genre_only:
+        if (
+            not genre_error
+            and genre_only
+        ):
 
-            poster_grid(
-                genre_only,
-                cols=grid_cols,
-                key_prefix="genre_fallback",
+            genre_cards = (
+                to_cards_from_genre_items(
+                    genre_only
+                )
             )
+
+            if genre_cards:
+
+                poster_grid(
+                    genre_cards,
+                    cols=grid_cols,
+                    key_prefix="genre_fallback",
+                )
+
+            else:
+
+                st.warning(
+                    "No recommendations available right now."
+                )
 
         else:
 
