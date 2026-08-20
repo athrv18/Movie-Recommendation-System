@@ -1,7 +1,3 @@
-Haan. Isko **cleaner, more professional, recruiter-friendly** bana sakte hain. Sabse important changes: duplicate Deployment section hatao, Live Demo ko top par rakho, raw GitHub URLs/reference clutter hatao, sections ko better order do, aur unnecessary claims kam karo.
-
-Ye **final `README.md`** use karo:
-
 # 🎬 Movie Recommendation System
 
 A full-stack movie discovery and recommendation application built with **Streamlit**, **FastAPI**, **TF-IDF**, and the **TMDB API**.
