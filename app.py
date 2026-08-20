@@ -233,42 +233,141 @@ if query_id:
 # API HELPER
 # =========================================================
 
-@st.cache_data(ttl=30)
-def api_get_json(path, params=None):
+@st.cache_data(ttl=60, show_spinner=False)
+def _api_request(path, params_tuple):
+
+    params = dict(params_tuple)
+
+    response = requests.get(
+        f"{API_BASE}{path}",
+        params=params,
+        timeout=30,
+    )
+
+    if response.status_code >= 400:
+
+        return {
+            "success": False,
+            "status_code": response.status_code,
+            "error": (
+                f"HTTP {response.status_code}: "
+                f"{response.text[:250]}"
+            ),
+        }
 
     try:
 
-        response = requests.get(
-            f"{API_BASE}{path}",
-            params=params,
-            timeout=20,
+        return {
+            "success": True,
+            "data": response.json(),
+        }
+
+    except ValueError:
+
+        return {
+            "success": False,
+            "status_code": 0,
+            "error": "Backend returned invalid JSON.",
+        }
+
+
+def api_get_json(path, params=None):
+
+    if params is None:
+        params = {}
+
+    params_tuple = tuple(
+        sorted(
+            (str(key), str(value))
+            for key, value in params.items()
+        )
+    )
+
+    try:
+
+        result = _api_request(
+            path,
+            params_tuple,
         )
 
-        if response.status_code >= 400:
+        # -------------------------------------------------
+        # SUCCESS
+        # -------------------------------------------------
 
-            return None, (
-                f"HTTP {response.status_code}: "
-                f"{response.text[:250]}"
-            )
+        if result.get("success"):
 
-        try:
-            return response.json(), None
+            return result["data"], None
 
-        except ValueError:
+        status_code = result.get("status_code")
 
-            return None, "Backend returned invalid JSON."
+        # -------------------------------------------------
+        # RETRY TEMPORARY SERVER ERRORS
+        # -------------------------------------------------
 
-    except requests.exceptions.ConnectionError:
+        if status_code in (500, 502, 503, 504):
 
-        return None, (
-            "Backend not connected. "
-            "Please start FastAPI on port 8000."
+            _api_request.clear()
+
+            try:
+
+                response = requests.get(
+                    f"{API_BASE}{path}",
+                    params=params,
+                    timeout=30,
+                )
+
+                if response.status_code >= 400:
+
+                    return None, (
+                        f"HTTP {response.status_code}: "
+                        f"{response.text[:250]}"
+                    )
+
+                try:
+
+                    return response.json(), None
+
+                except ValueError:
+
+                    return None, (
+                        "Backend returned invalid JSON."
+                    )
+
+            except requests.exceptions.Timeout:
+
+                return None, (
+                    "Backend took too long to respond."
+                )
+
+            except requests.exceptions.ConnectionError:
+
+                return None, (
+                    "Backend temporarily unavailable."
+                )
+
+            except requests.exceptions.RequestException as error:
+
+                return None, str(error)
+
+        # -------------------------------------------------
+        # OTHER ERRORS
+        # -------------------------------------------------
+
+        return None, result.get(
+            "error",
+            "Backend request failed.",
         )
 
     except requests.exceptions.Timeout:
 
         return None, (
             "Backend took too long to respond."
+        )
+
+    except requests.exceptions.ConnectionError:
+
+        return None, (
+            "Backend temporarily unavailable."
         )
 
     except requests.exceptions.RequestException as error:
@@ -426,7 +525,7 @@ def poster_grid(
 
                     st.image(
                         poster,
-                        use_column_width=True,
+                        width="stretch",
                     )
 
                 else:
@@ -799,8 +898,8 @@ if st.session_state.view == "home":
     typed = st.text_input(
         "Movie title",
         placeholder=(
-            "Avengers, Batman, "
-            "Sanam Teri Kasam..."
+            "Avenger, Batman, "
+            "Spider Man"
         ),
         label_visibility="collapsed",
     )
@@ -1047,7 +1146,7 @@ elif st.session_state.view == "details":
 
         st.image(
             backdrop,
-            use_column_width=True,
+            width="stretch",
         )
 
     # -----------------------------------------------------
@@ -1065,7 +1164,7 @@ elif st.session_state.view == "details":
 
             st.image(
                 poster,
-                use_column_width=True,
+                width="stretch",
             )
 
         else:
