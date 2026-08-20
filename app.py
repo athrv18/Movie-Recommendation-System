@@ -426,7 +426,6 @@ def poster_grid(
 
                     st.image(
                         poster,
-                        width="stretch",
                     )
 
                 else:
@@ -1047,7 +1046,6 @@ elif st.session_state.view == "details":
 
         st.image(
             backdrop,
-            width="stretch",
         )
 
     # -----------------------------------------------------
@@ -1065,7 +1063,6 @@ elif st.session_state.view == "details":
 
             st.image(
                 poster,
-                width="stretch",
             )
 
         else:
