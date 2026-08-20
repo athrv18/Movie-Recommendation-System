@@ -254,6 +254,10 @@ The application also allows users to choose the movie category displayed on the 
 
 ![Movie Recommendations](screenshots/recommendations.png)
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 ---
 
 ## 🚀 Future Improvements
