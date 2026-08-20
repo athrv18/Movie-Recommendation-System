@@ -241,9 +241,7 @@ The project is structured as a Streamlit frontend communicating with a FastAPI b
 
 The Streamlit application currently uses the deployed FastAPI service:
 
-```text
 https://movie-recommendation-system-2wx1.onrender.com
-```
 
 The backend requires the `TMDB_API_KEY` environment variable for TMDB API access. ([GitHub][1])
 
