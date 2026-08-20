@@ -1,8 +1,12 @@
+Haan. Isko **cleaner, more professional, recruiter-friendly** bana sakte hain. Sabse important changes: duplicate Deployment section hatao, Live Demo ko top par rakho, raw GitHub URLs/reference clutter hatao, sections ko better order do, aur unnecessary claims kam karo.
+
+Ye **final `README.md`** use karo:
+
 # 🎬 Movie Recommendation System
 
-A full-stack movie recommendation application that combines a **Streamlit interface**, **FastAPI backend**, **TF-IDF-based movie similarity**, and **TMDB movie data** to help users search for movies, explore movie information, and discover similar titles.
+A full-stack movie discovery and recommendation application built with **Streamlit**, **FastAPI**, **TF-IDF**, and the **TMDB API**.
 
-The application uses precomputed TF-IDF resources for local content-based recommendations while TMDB is used for movie search, posters, details, categories, and genre-based recommendations. ([GitHub][1])
+The application allows users to search for movies, explore movie details, browse different movie categories, and discover similar movies using a content-based recommendation approach.
 
 ---
 
@@ -10,53 +14,53 @@ The application uses precomputed TF-IDF resources for local content-based recomm
 
 [![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-Open%20Application-success?style=for-the-badge)](https://movie-recommendation-system-2wx1.onrender.com)
 
+---
+
 ## ✨ Features
 
 * 🔎 Search movies by title
-* 🎬 View movie posters and release information
-* 📖 View movie details and overview
+* 🎬 Explore movie posters and release information
+* 📖 View detailed movie information and overviews
 * 🤖 Get similar movie recommendations using TF-IDF
-* 🎭 Get genre-based movie recommendations
+* 🎭 Discover movies based on genre
 * 🔥 Browse trending movies
-* ⭐ Browse popular and top-rated movies
+* ⭐ Explore popular and top-rated movies
 * 🎞️ Browse currently playing and upcoming movies
-* 🖼️ Display TMDB movie posters and backdrops
-* 📱 Responsive Streamlit movie interface
-* ⚡ FastAPI backend with dedicated API endpoints
+* 🖼️ Display movie posters and backdrops
+* 📱 Responsive Streamlit interface
+* ⚡ FastAPI backend with dedicated endpoints
 * ❤️ Interactive movie discovery experience
-
-The Streamlit application provides movie search, category selection, movie cards, and navigation to movie details, while the FastAPI service exposes TMDB, genre, and TF-IDF recommendation functionality. ([GitHub][1])
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Category          | Technologies                            |
-| ----------------- | --------------------------------------- |
-| Frontend          | Streamlit                               |
-| Backend           | FastAPI, Uvicorn                        |
-| Machine Learning  | Scikit-learn, TF-IDF, Cosine Similarity |
-| Data Processing   | Pandas, NumPy, SciPy                    |
-| External API      | TMDB API                                |
-| HTTP/API Requests | Requests, HTTPX                         |
-| Configuration     | Python Dotenv                           |
-| Deployment        | Render                                  |
-
-The dependency versions are defined in `requirements.txt`, including FastAPI, Uvicorn, Streamlit, Pandas, NumPy, SciPy, Scikit-learn, python-dotenv, and Requests. ([GitHub][2])
+| Category             | Technologies                            |
+| -------------------- | --------------------------------------- |
+| **Frontend**         | Streamlit                               |
+| **Backend**          | FastAPI, Uvicorn                        |
+| **Machine Learning** | Scikit-learn, TF-IDF, Cosine Similarity |
+| **Data Processing**  | Pandas, NumPy, SciPy                    |
+| **External API**     | TMDB API                                |
+| **HTTP Requests**    | Requests, HTTPX                         |
+| **Configuration**    | Python-dotenv                           |
+| **Deployment**       | Render                                  |
 
 ---
 
 ## 🧠 How It Works
 
-### 1. User Searches for a Movie
+The application follows a simple movie discovery and recommendation workflow.
 
-The user enters a movie title in the Streamlit interface.
+### 1. 🔎 Movie Search
 
-The application sends the search request to the FastAPI backend, which communicates with TMDB to find matching movies. ([GitHub][1])
+The user searches for a movie through the Streamlit interface.
 
-### 2. Movie Information is Retrieved
+The request is sent to the FastAPI backend, which communicates with the TMDB API to retrieve matching movies.
 
-TMDB provides information such as:
+### 2. 🎬 Movie Details
+
+After selecting a movie, the application retrieves information such as:
 
 * Movie title
 * Poster
@@ -66,36 +70,29 @@ TMDB provides information such as:
 * Genres
 * Backdrop
 
-The backend converts this information into structured movie objects for the Streamlit interface. ([GitHub][3])
+### 3. 🤖 Content-Based Recommendation
 
-### 3. TF-IDF Recommendation
+The project uses precomputed TF-IDF resources to represent movie information numerically.
 
-The project contains precomputed:
+The selected movie is mapped to its corresponding index and its TF-IDF representation is compared with other movies.
 
-* TF-IDF vectorizer
-* TF-IDF matrix
-* Movie index mapping
-* Movie dataframe
+### 4. 📊 Similarity Calculation
 
-When a movie is selected, its TF-IDF vector is compared with the vectors of other movies. ([GitHub][3])
+Cosine similarity is used to determine how closely movies are related.
 
-### 4. Cosine Similarity
+Movies with higher similarity scores are selected as recommendations.
 
-The system calculates similarity scores between the selected movie and other movies using the TF-IDF matrix.
+### 5. 🎯 Results
 
-Movies with higher similarity scores are returned as recommendations. ([GitHub][3])
-
-### 5. Recommendations are Displayed
-
-The recommended movies are presented through the Streamlit interface with movie information and posters.
+The recommended movies are displayed through the Streamlit interface along with relevant movie information and posters.
 
 ---
 
-## 🤖 Recommendation Method
+## 🤖 Recommendation System
 
-The project uses **TF-IDF (Term Frequency–Inverse Document Frequency)** with similarity calculations for content-based movie recommendations.
+The recommendation engine uses a **content-based filtering approach** based on **TF-IDF and similarity calculations**.
 
-The FastAPI backend loads the precomputed TF-IDF resources from:
+The project includes precomputed machine-learning resources:
 
 ```text
 df.pkl
@@ -104,17 +101,24 @@ tfidf.pkl
 tfidf_matrix.pkl
 ```
 
-It then maps a movie title to its corresponding index, retrieves its TF-IDF vector, calculates similarity scores against the movie matrix, sorts the results by similarity, and returns the highest-scoring movies. ([GitHub][3])
+The recommendation process works by:
 
-This allows the system to recommend movies that are mathematically similar to the selected movie based on the information represented in the TF-IDF data.
+1. Finding the selected movie in the dataset.
+2. Retrieving its corresponding TF-IDF representation.
+3. Comparing it with the movie matrix.
+4. Calculating similarity scores.
+5. Sorting movies based on similarity.
+6. Returning the most similar titles.
+
+This approach allows the system to recommend movies that are similar to the movie selected by the user.
 
 ---
 
-## 🎭 Genre Recommendations
+## 🎭 Genre-Based Recommendations
 
-In addition to TF-IDF recommendations, the backend provides genre-based recommendations.
+The application also provides genre-based recommendations.
 
-For a selected TMDB movie, the application retrieves its details, identifies its first genre, and uses TMDB's movie discovery functionality to find popular movies from that genre. ([GitHub][3])
+For a selected movie, the backend retrieves its TMDB information, identifies its genre, and uses TMDB's movie discovery functionality to find movies from that genre.
 
 ---
 
@@ -145,7 +149,21 @@ Movie-Recommendation-System/
 └── README.md
 ```
 
-The repository currently contains the application, FastAPI backend, notebook, movie metadata CSV, serialized TF-IDF resources, favicon, dependency file, and runtime configuration. ([GitHub][4])
+### Key Files
+
+| File                                | Purpose                                      |
+| ----------------------------------- | -------------------------------------------- |
+| `app.py`                            | Streamlit frontend and user interface        |
+| `main.py`                           | FastAPI backend and recommendation/API logic |
+| `movies_metadata.csv`               | Movie metadata dataset                       |
+| `df.pkl`                            | Preprocessed movie dataframe                 |
+| `indices.pkl`                       | Movie-to-index mapping                       |
+| `tfidf.pkl`                         | Trained TF-IDF vectorizer                    |
+| `tfidf_matrix.pkl`                  | Precomputed TF-IDF matrix                    |
+| `requirements.txt`                  | Python dependencies                          |
+| `runtime.txt`                       | Runtime configuration                        |
+| `favicon.png`                       | Application favicon                          |
+| `Movie-Recommendation-System.ipynb` | Notebook used for project/model development  |
 
 ---
 
@@ -157,7 +175,7 @@ The repository currently contains the application, FastAPI backend, notebook, mo
 git clone https://github.com/athrv18/Movie-Recommendation-System.git
 ```
 
-### 2. Enter the Project Directory
+### 2. Navigate to the Project
 
 ```powershell
 cd Movie-Recommendation-System
@@ -193,13 +211,16 @@ Create a `.env` file in the project root:
 TMDB_API_KEY=your_tmdb_api_key
 ```
 
-The backend loads `TMDB_API_KEY` using `python-dotenv` and requires it to be available when the API starts. ([GitHub][3])
-
-**Do not commit your actual API key to GitHub.**
+Keep your API key private and **never commit it to GitHub**.
 
 ---
 
-## ▶️ Running the Project
+## ▶️ Running the Application
+
+The project consists of two services:
+
+* **FastAPI** — Backend API
+* **Streamlit** — Frontend interface
 
 ### Start the FastAPI Backend
 
@@ -207,19 +228,15 @@ The backend loads `TMDB_API_KEY` using `python-dotenv` and requires it to be ava
 uvicorn main:app --reload
 ```
 
-The FastAPI application provides endpoints for health checks, TMDB movie search, movie details, home categories, genre recommendations, and TF-IDF recommendations. ([GitHub][3])
-
 ### Start the Streamlit Frontend
 
-Open another PowerShell terminal:
+Open a second terminal and run:
 
 ```powershell
 streamlit run app.py
 ```
 
-The Streamlit application is configured to communicate with the deployed FastAPI service through the `API_BASE` environment variable, with the current deployed API URL configured as its default. ([GitHub][1])
-
-For local development, `API_BASE` can be configured to point to your local FastAPI server.
+The Streamlit application communicates with the FastAPI backend through the configured API base URL.
 
 ---
 
@@ -227,78 +244,79 @@ For local development, `API_BASE` can be configured to point to your local FastA
 
 1. Start the FastAPI backend.
 2. Start the Streamlit application.
-3. Open the Streamlit URL in your browser.
-4. Search for a movie by title.
-5. Select a movie from the search results.
+3. Open the Streamlit application in your browser.
+4. Search for a movie.
+5. Select a movie from the results.
 6. Explore its details.
-7. View similar movies generated through TF-IDF recommendations.
+7. View similar movie recommendations.
 8. Explore genre-based recommendations.
 9. Browse categories such as trending, popular, top-rated, now-playing, and upcoming movies.
-
-The application also allows users to choose the movie category displayed on the home feed and control the number of movies shown per row. ([GitHub][1])
 
 ---
 
 ## 🌐 Deployment
 
-The project is structured as a Streamlit frontend communicating with a FastAPI backend.
+The application is deployed using **Render**.
 
-The Streamlit application currently uses the deployed FastAPI service:
+### Live Application
 
-https://movie-recommendation-system-2wx1.onrender.com
+[![Live Demo](https://img.shields.io/badge/🚀%20Open%20Live%20Application-Render-success?style=for-the-badge)](https://movie-recommendation-system-2wx1.onrender.com)
 
-The backend requires the `TMDB_API_KEY` environment variable for TMDB API access. ([GitHub][1])
+### Backend
 
-For a Render deployment, configure the required environment variable in the Render service rather than committing the API key to the repository.
+The FastAPI service is deployed on Render and provides the API functionality required by the application.
+
+The backend uses the `TMDB_API_KEY` environment variable to communicate with TMDB.
+
+> 🔐 API credentials should always be configured through environment variables and should not be committed to the repository.
 
 ---
 
 ## 📸 Screenshots
 
-### Home Page
+### 🏠 Home Page
 
 ![Home Page](screenshots/home.png)
 
-### Movie Search
+### 🔎 Movie Search
 
 ![Movie Search](screenshots/search.png)
 
-### Movie Recommendations
+### 🤖 Movie Recommendations
 
 ![Movie Recommendations](screenshots/recommendations.png)
 
-> Add your actual screenshots to a `screenshots` folder and update the filenames if necessary.
+> Add the actual screenshots to a `screenshots` folder in the repository.
 
 ---
 
 ## 🚀 Future Improvements
 
-Potential improvements for future versions include:
+Possible future improvements include:
 
-* Personalized recommendations based on user history
-* User accounts and saved movies
-* Ratings and watchlists
-* More advanced recommendation algorithms
-* Improved recommendation ranking
-* Additional movie filters
-* Recommendation explanations
-* Improved caching for external TMDB requests
-* Expanded movie metadata and discovery options
+* 👤 Personalized recommendations based on user history
+* ❤️ User watchlists and saved movies
+* ⭐ Movie ratings and reviews
+* 🎯 More advanced recommendation algorithms
+* 🔍 Advanced movie filtering
+* 💡 Recommendation explanations
+* ⚡ Improved API response caching
+* 📊 Additional movie analytics
+* 🎬 Expanded movie discovery features
 
 ---
 
 ## 👨‍💻 Author
 
-**Atharva Paradkar**
+### Atharva Paradkar
 
-GitHub:
-[https://github.com/athrv18](https://github.com/athrv18)
+[![GitHub](https://img.shields.io/badge/GitHub-athrv18-181717?style=for-the-badge\&logo=github)](https://github.com/athrv18)
 
 ---
 
-## 📌 Project Repository
+## 📌 Repository
 
-[Movie Recommendation System — GitHub Repository](https://github.com/athrv18/Movie-Recommendation-System?utm_source=chatgpt.com)
+[![GitHub Repository](https://img.shields.io/badge/View%20Source%20Code-GitHub-181717?style=for-the-badge\&logo=github)](https://github.com/athrv18/Movie-Recommendation-System)
 
 ---
 
@@ -306,7 +324,8 @@ GitHub:
 
 If you found this project useful, consider giving the repository a ⭐ on GitHub.
 
-[1]: https://github.com/athrv18/Movie-Recommendation-System/blob/main/app.py "Movie-Recommendation-System/app.py at main · athrv18/Movie-Recommendation-System · GitHub"
-[2]: https://github.com/athrv18/Movie-Recommendation-System/blob/main/requirements.txt "Movie-Recommendation-System/requirements.txt at main · athrv18/Movie-Recommendation-System · GitHub"
-[3]: https://github.com/athrv18/Movie-Recommendation-System/blob/main/main.py "Movie-Recommendation-System/main.py at main · athrv18/Movie-Recommendation-System · GitHub"
-[4]: https://github.com/athrv18/Movie-Recommendation-System "GitHub - athrv18/Movie-Recommendation-System · GitHub"
+---
+
+<p align="center">
+  Built with Python, Streamlit, FastAPI & Machine Learning
+</p>
