@@ -254,8 +254,6 @@ The application also allows users to choose the movie category displayed on the 
 
 ![Movie Recommendations](screenshots/recommendations.png)
 
-> Add your actual screenshots to a `screenshots` folder and update the filenames if necessary.
-
 ---
 
 ## 🚀 Future Improvements
