@@ -6,6 +6,10 @@ The application uses precomputed TF-IDF resources for local content-based recomm
 
 ---
 
+## 🌐 Live Demo
+
+[![Live Demo](https://img.shields.io/badge/🚀%20Live%20Demo-Open%20Application-success?style=for-the-badge)](https://movie-recommendation-system-2wx1.onrender.com)
+
 ## ✨ Features
 
 * 🔎 Search movies by title
@@ -285,7 +289,7 @@ Potential improvements for future versions include:
 
 ## 👨‍💻 Author
 
-**Atharva**
+**Atharva Paradkar**
 
 GitHub:
 [https://github.com/athrv18](https://github.com/athrv18)
